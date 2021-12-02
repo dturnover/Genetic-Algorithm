@@ -283,7 +283,7 @@ def runGA(pSize, cRate, mRate, logFile):
     # open a file to write to
     file = 0
     if len(logFile) > 0:
-        file = open(logFile, 'w')
+        file = open('%s.txt' % logFile, 'w')
 
     # each iteration simulates a single generation
     for i in range(numGenerations):
