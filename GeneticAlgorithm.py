@@ -3,8 +3,7 @@ import matplotlib.pyplot as plt
 import numpy
 import numpy as np
 
-# Debug mode, graph mode and print mode toggles
-Debug = False
+# Graph mode and Print mode toggles
 Graph = False
 Print = True
 
@@ -112,11 +111,6 @@ def crossover(g1, g2):
     # set the crossover point
     crossoverPoint = random.randrange(0, len(g1))
 
-    # debug statement
-    if Debug:
-        print("Performing crossover:\n- Crossover point:", crossoverPoint)
-        print("- Parent genomes:", g1, ",", g2)
-
     # split the first genome at the crossover point
     g1s1 = g1[0:crossoverPoint]
     g1s2 = g1[crossoverPoint:len(g1)]
@@ -129,11 +123,6 @@ def crossover(g1, g2):
     child1 = g1s1 + g2s2
     child2 = g2s1 + g1s2
 
-    # debug statement
-    if Debug:
-        print("- Child one:", child1)
-        print("- Child two:", child2)
-
     # return the pair of children
     return child1, child2
 
@@ -145,9 +134,6 @@ def mutate(g, mr):
     for i in range(len(g)):
         # determine whether mutation will occur based on mutation rate
         if random.randrange(0, 10000) < mr * 10000:
-            # debug statement
-            if Debug:
-                print("------------------------------------------------\nMutating:\n- Before:", g)
             # flip the bit
             if g[i] == '0':
                 gl = list(g)
@@ -157,10 +143,6 @@ def mutate(g, mr):
                 gl = list(g)
                 gl[i] = '0'
                 g = ''.join(gl)
-
-            # debug statement
-            if Debug:
-                print("- After: ", g)
 
     # return the genome
     return g
@@ -179,18 +161,10 @@ def selectSingle(fv, p):
     # obtain random number ('spin' the wheel)
     spin = random.randrange(0, fTotal)
 
-    # debug statement
-    if Debug:
-        print("- Test spin:", spin)
-
     # find the spin's corresponding genome
     for i in range(len(proportions)):
         # if the spin lands on the ith value of proportion then it landed on the (i-1)th value
         if spin <= proportions[i]:
-            # debug statement
-            if Debug:
-                print("- Test proportions:", proportions[i], "i:", i)
-
             return i - 1
 
     # the first index was selected
@@ -200,17 +174,9 @@ def selectSingle(fv, p):
 # selects and returns two genomes from the given population using
 # fitness-proportionate selection
 def selectPair(p, fv):
-    # debug statement
-    if Debug:
-        print("\nSelecting parents:")
-
     # index of the first selection
     location1 = selectSingle(fv, p)
     s1 = p[location1]
-
-    # debug statement
-    if Debug:
-        print("- Test locations 1:", location1, "s1:", s1)
 
     # update structures to remove selected item no. 1 from consideration
     save = [fv[location1], p[location1]]
@@ -219,10 +185,6 @@ def selectPair(p, fv):
     # index of the second selection
     location2 = selectSingle(fv, p)
     s2 = p[location2]
-
-    # debug statement
-    if Debug:
-        print("- Test locations 2:", location2, "s2:", s2)
 
     # return the deleted values to their respective lists
     fv.insert(location1, save[0])
@@ -240,10 +202,6 @@ def replace(p, fv, g1, g2, x):
 
     # if the selected genomes were crossed
     if x:
-        # debug statement
-        if Debug:
-            print("Replacing:", p[0], "and", p[1], " with", g1, "and", g2, ", respective fitnesses:", fitness(p[0]), fitness(p[1]), "->", fg1, fg2)
-
         # assign the selected genomes to the two lowest performing genomes
         p[0] = g1
         p[1] = g2
@@ -252,17 +210,9 @@ def replace(p, fv, g1, g2, x):
     else:
         # assign the top selected genome to the lowest performing genome
         if fg1 >= fg2:
-            # debug statement
-            if Debug:
-                print("Replacing:", p[0], "with", g1, ", respective fitnesses:", fitness(p[0]), "t->",  fg1)
-
             p[0] = g1
             fv[0] = fg1
         else:
-            # debug statement
-            if Debug:
-                print("Replacing:", p[0], "with", g2, ", respective fitnesses:", fitness(p[0]), "->",  fg2)
-
             p[0] = g2
             fv[0] = fg2
 
@@ -313,10 +263,6 @@ def runGA(pSize, cRate, mRate, logFile):
         if random.randrange(0, 100) < cRate * 100:
             genome1, genome2 = crossover(genome1, genome2)
             crossed = True
-        else:
-            # debug statement
-            if Debug:
-                print("NOT CROSSED")
 
         # mutate the selected genomes
         genome1 = mutate(genome1, mRate)
